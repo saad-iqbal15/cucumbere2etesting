@@ -2,6 +2,7 @@ package org.demo.cucumber;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import lombok.extern.log4j.Log4j2;
 
 import org.demo.cucumber.entity.Post;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Log4j2
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class StepDefinitions {
@@ -28,16 +29,17 @@ public class StepDefinitions {
     private String postUrl = "http://localhost";
 
     private String postId = "";
+    private String post_content = "";
 
-    @Given("I create a new post")
+    @Given("I hit API for creating new post")
     public void i_create_a_new_post() {
         String url = postUrl + ":" + port + "/post";
         List<Post> allPost = restTemplate.getForObject(url, List.class);
-        log.info(allPost);
+        
         assertTrue(!allPost.isEmpty());
     }
 
-    @Given("^I send a post to be created with post id (.*), title (.*) and content (.*)$")
+    @When("^I send a post to be created with post id (.*), title (.*) and content (.*)$")
     public void i_sending_post(String post_id, String title, String content) {
         String url = postUrl + ":" + port + "/post";
         Post newPost = new Post();
@@ -46,7 +48,8 @@ public class StepDefinitions {
         newPost.setContent(content);
         Post post = restTemplate.postForObject(url, newPost, Post.class);
         postId = post.getId();
-        log.info(post);
+        post_content = post.getContent();
+       
         assertNotNull(post);
     }
 
@@ -54,8 +57,9 @@ public class StepDefinitions {
     public void i_should_see_my_newly_created_post() {
         String url = postUrl + ":" + port + "/post/" + postId;
         Post myPost = restTemplate.getForObject(url, Post.class);
-        log.info(myPost);
+       
         assertEquals(postId, myPost.getId());
+        assertEquals(post_content, myPost.getContent());
         assertNotNull(myPost);
     }
 }

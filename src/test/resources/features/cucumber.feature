@@ -1,8 +1,9 @@
 Feature: Post functionality
 
+@Saad
   Scenario Outline: As a customer I want to create a new post.
-    Given I create a new post
-    And I send a post to be created with post id <post_id>, title <title> and content <content>
+    Given I hit API for creating new post
+    When I send a post to be created with post id <post_id>, title <title> and content <content>
     Then I should be able to see my newly created post
 
     Examples:
